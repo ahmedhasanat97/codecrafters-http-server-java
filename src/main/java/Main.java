@@ -29,13 +29,12 @@ public class Main {
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
             OutputStream output = clientSocket.getOutputStream();
-            PrintWriter writer = new PrintWriter(output, true);
 
             String request;
             String response = "HTTP/1.1 200 OK\r\n\r\n";
             while ((request = reader.readLine()) != null) {
                 System.out.println("Received: " + request);
-                writer.print(response);
+                output.write(response.getBytes());
             }
 
         } catch (IOException e) {
