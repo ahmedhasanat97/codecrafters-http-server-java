@@ -1,5 +1,3 @@
-import java.util.Objects;
-
 public class RequestUtils {
 
     public static Request toRequest(String requestLine) {

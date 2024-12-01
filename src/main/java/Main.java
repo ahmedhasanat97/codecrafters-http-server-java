@@ -3,14 +3,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Main {
 
-    private static String SUCCESS_RESPONSE = "HTTP/1.1 200 OK\r\n\r\n";
-    private static String NOT_FOUND_RESPONSE = "HTTP/1.1 404 Not Found\r\n\r\n";
+    private static final String SUCCESS_RESPONSE = "HTTP/1.1 200 OK\r\n\r\n";
+    private static final String NOT_FOUND_RESPONSE = "HTTP/1.1 404 Not Found\r\n\r\n";
 
     public static void main(String[] args) {
         // You can use print statements as follows for debugging, they'll be visible when running tests.
@@ -47,11 +46,30 @@ public class Main {
     }
 
     private static void handleResponse(OutputStream output, Request request) throws IOException {
-        if ("/".equals(request.getPath())) {
-            output.write(SUCCESS_RESPONSE.getBytes());
-            return;
+        Response<Object> response;
+        if (request.getPath().equals("/")) {
+            response = Response.builder()
+                    .protocol("HTTP/1.1")
+                    .status(ResponseStatus.OK)
+                    .build();
+        } else if (request.getPath().startsWith("/echo/")) {
+            response = Response.builder()
+                    .protocol("HTTP/1.1")
+                    .status(ResponseStatus.OK)
+                    .build();
+
+            response.setBody(request.getPath().substring(6));
+
+            response.addHeader(Headers.CONTENT_TYPE, "text/plain");
+            response.addHeader(Headers.CONTENT_LENGTH, String.valueOf(response.getBody().toString().length()));
+        } else {
+            response = Response.builder()
+                    .protocol("HTTP/1.1")
+                    .status(ResponseStatus.NOT_FOUND)
+                    .build();
         }
-        output.write(NOT_FOUND_RESPONSE.getBytes());
+
+        output.write(response.toString().getBytes());
     }
 
 }
