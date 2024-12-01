@@ -8,11 +8,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Main {
+
+    private static String SUCCESS_RESPONSE = "HTTP/1.1 200 OK\r\n\r\n";
+    private static String NOT_FOUND_RESPONSE = "HTTP/1.1 404 Not Found\r\n\r\n";
+
     public static void main(String[] args) {
         // You can use print statements as follows for debugging, they'll be visible when running tests.
         System.out.println("Logs from your program will appear here!");
-
-        // Uncomment this block to pass the first stage
 
         try {
             ServerSocket serverSocket = new ServerSocket(4221);
@@ -30,16 +32,26 @@ public class Main {
 
             OutputStream output = clientSocket.getOutputStream();
 
-            String request;
-            String response = "HTTP/1.1 200 OK\r\n\r\n";
-            while ((request = reader.readLine()) != null) {
-                System.out.println("Received: " + request);
-                output.write(response.getBytes());
-            }
+            // reading the request line
+            String requestLine = reader.readLine();
+
+            System.out.println("Received: " + requestLine);
+
+            Request request = RequestUtils.toRequest(requestLine);
+
+            handleResponse(output, request);
 
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
         }
+    }
+
+    private static void handleResponse(OutputStream output, Request request) throws IOException {
+        if ("/".equals(request.getPath())) {
+            output.write(SUCCESS_RESPONSE.getBytes());
+            return;
+        }
+        output.write(NOT_FOUND_RESPONSE.getBytes());
     }
 
 }
