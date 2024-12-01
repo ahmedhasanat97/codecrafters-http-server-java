@@ -1,7 +1,7 @@
 public enum ResponseStatus {
 
     OK(200, "OK"),
-    NOT_FOUND(404, "NOT_FOUND");
+    NOT_FOUND(404, "Not Found");
 
     private final int code;
     private final String text;
