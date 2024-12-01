@@ -1,8 +1,3 @@
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum ResponseStatus {
 
     OK(200, "OK"),
@@ -10,5 +5,18 @@ public enum ResponseStatus {
 
     private final int code;
     private final String text;
+
+    ResponseStatus(int code, String text) {
+        this.code = code;
+        this.text = text;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getText() {
+        return text;
+    }
 
 }
