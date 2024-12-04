@@ -24,7 +24,7 @@ public class RequestUtils {
         headers.forEach(header -> {
             int indexOfFirstColon = header.indexOf(':');
             String key = header.substring(0, indexOfFirstColon).trim().toLowerCase();
-            String value = header.substring(indexOfFirstColon).trim();
+            String value = header.substring(indexOfFirstColon + 1).trim();
             parsedHeaders.put(key, value);
         });
 
