@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Main {
 
@@ -77,7 +78,7 @@ public class Main {
             response.setStatus(ResponseStatus.OK);
             response.setBody(request.getHeader(Headers.USER_AGENT));
             response.addHeader(Headers.CONTENT_TYPE, "text/plain");
-            response.addHeader(Headers.CONTENT_LENGTH, String.valueOf(response.getBody().toString().length()));
+            response.addHeader(Headers.CONTENT_LENGTH, String.valueOf(Optional.ofNullable(response.getBody()).map(v -> v.toString().length()).orElse(0)));
         } else {
             response = new Response<>();
             response.setProtocol("HTTP/1.1");
