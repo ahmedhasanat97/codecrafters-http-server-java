@@ -5,13 +5,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Main {
 
     public static void main(String[] args) {
-        // You can use print statements as follows for debugging, they'll be visible when running tests.
-        System.out.println("Logs from your program will appear here!");
-
         try {
             ServerSocket serverSocket = new ServerSocket(4221);
 
@@ -28,12 +28,28 @@ public class Main {
 
             OutputStream output = clientSocket.getOutputStream();
 
-            // reading the request line
-            String requestLine = reader.readLine();
+            String requestLine = null;
+            List<String> headers = new ArrayList<>();
+            String requestBody = null;
 
-            System.out.println("Received: " + requestLine);
+            String line;
+            while (!(line = reader.readLine()).trim().equals("")) {
+                System.out.println("Received: " + line);
 
-            Request request = RequestUtils.toRequest(requestLine);
+                if (Objects.isNull(requestLine)) {
+                    requestLine = line;
+                    continue;
+                }
+
+                if (!Objects.isNull(requestBody)) {
+                    headers.add(requestBody);
+                }
+
+                requestBody = line;
+
+            }
+
+            Request request = RequestUtils.toRequest(requestLine, headers, requestBody);
 
             handleResponse(output, request);
 
@@ -53,6 +69,13 @@ public class Main {
             response.setProtocol("HTTP/1.1");
             response.setStatus(ResponseStatus.OK);
             response.setBody(request.getPath().substring(6));
+            response.addHeader(Headers.CONTENT_TYPE, "text/plain");
+            response.addHeader(Headers.CONTENT_LENGTH, String.valueOf(response.getBody().toString().length()));
+        } else if (request.getPath().startsWith("/user-agent")) {
+            response = new Response<>();
+            response.setProtocol("HTTP/1.1");
+            response.setStatus(ResponseStatus.OK);
+            response.setBody(request.getHeader(Headers.USER_AGENT));
             response.addHeader(Headers.CONTENT_TYPE, "text/plain");
             response.addHeader(Headers.CONTENT_LENGTH, String.valueOf(response.getBody().toString().length()));
         } else {
