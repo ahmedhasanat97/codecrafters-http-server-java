@@ -31,26 +31,25 @@ public class Main {
 
             String requestLine = null;
             List<String> headers = new ArrayList<>();
-            String requestBody = null;
 
             String line;
-            while (!(line = reader.readLine()).trim().equals("")) {
+            while ((line = reader.readLine()) != null) {
                 System.out.println("Received: " + line);
 
+                // Handle the request line
                 if (Objects.isNull(requestLine)) {
                     requestLine = line;
                     continue;
                 }
 
-                if (!Objects.isNull(requestBody)) {
-                    headers.add(requestBody);
+                if (line.isEmpty()) {
+                    break;
                 }
 
-                requestBody = line;
-
+                headers.add(line);
             }
 
-            Request request = RequestUtils.toRequest(requestLine, headers, requestBody);
+            Request request = RequestUtils.toRequest(requestLine, headers);
 
             handleResponse(output, request);
 

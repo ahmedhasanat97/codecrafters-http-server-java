@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class RequestUtils {
 
-    public static Request toRequest(String requestLine, List<String> headers, String requestBody) {
+    public static Request toRequest(String requestLine, List<String> headers) {
         String path = RequestUtils.extractRequestPath(requestLine);
         Map<String, String> parsedHeaders = RequestUtils.extractRequestHeaders(headers);
         return new Request(path, parsedHeaders);
