@@ -95,17 +95,17 @@ public class HttpConnection implements Runnable {
                 response = new Response<>();
                 response.setProtocol("HTTP/1.1");
                 response.setStatus(ResponseStatus.NOT_FOUND);
-            }
+            } else {
+                List<String> lines = Files.readAllLines(filePath);
+                StringBuilder fileContent = new StringBuilder();
+                for (String line : lines) {
+                    fileContent.append(line);
+                }
 
-            List<String> lines = Files.readAllLines(filePath);
-            StringBuilder fileContent = new StringBuilder();
-            for (String line : lines) {
-                fileContent.append(line);
+                response.setBody(fileContent.toString());
+                response.addHeader(Headers.CONTENT_TYPE, "application/octet-stream");
+                response.addHeader(Headers.CONTENT_LENGTH, String.valueOf(Optional.ofNullable(response.getBody()).map(v -> v.toString().length()).orElse(0)));
             }
-
-            response.setBody(fileContent.toString());
-            response.addHeader(Headers.CONTENT_TYPE, "application/octet-stream");
-            response.addHeader(Headers.CONTENT_LENGTH, String.valueOf(Optional.ofNullable(response.getBody()).map(v -> v.toString().length()).orElse(0)));
         } else {
             response = new Response<>();
             response.setProtocol("HTTP/1.1");
