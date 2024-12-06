@@ -3,8 +3,8 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        Server server = new Server(4221);
-        server.run();
+        HttpServer httpServer = new HttpServer(4221, Runtime.getRuntime().availableProcessors());
+        httpServer.run();
     }
 
 }

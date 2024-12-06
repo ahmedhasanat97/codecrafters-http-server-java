@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class Client implements Runnable {
+public class HttpConnection implements Runnable {
 
     private final Socket clientSocket;
     private final PrintWriter out;
     private final BufferedReader in;
 
-    public Client(Socket clientSocket) throws IOException {
+    public HttpConnection(Socket clientSocket) throws IOException {
+        System.out.println("new connection created");
         this.clientSocket = clientSocket;
         out = new PrintWriter(clientSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -22,10 +23,10 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("accepted new connection");
+
+        System.out.println("new connection running");
 
         try {
-
             String requestLine = null;
             List<String> headers = new ArrayList<>();
 
