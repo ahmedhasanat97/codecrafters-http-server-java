@@ -8,7 +8,10 @@ import java.util.regex.Pattern;
 public class HttpRoutePatternUtils {
 
     public static boolean isValidPattern(String pathPattern) {
-        String regex = "^/?(\\{[a-zA-Z0-9_-]+\\}|[a-zA-Z0-9_]+)(/(\\{[a-zA-Z0-9_-]+\\}|[a-zA-Z0-9_-]+))*/*$";
+        if ("/".equals(pathPattern)) {
+            return true;
+        }
+        String regex = "^/?(\\{[a-zA-Z0-9_-]+\\}|[a-zA-Z0-9_-]+)(/(\\{[a-zA-Z0-9_-]+\\}|[a-zA-Z0-9_-]+))*/*$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(pathPattern);
         return matcher.matches();
@@ -18,7 +21,7 @@ public class HttpRoutePatternUtils {
         return transformPathVariables(pathPattern);
     }
 
-    private static String transformPathVariables(String pathPattern) {
+    public static String transformPathVariables(String pathPattern) {
         // Define the regex to match path variables within curly braces
         String pathVariableRegex = "\\{([a-zA-Z0-9_-]+)\\}";
 
@@ -31,6 +34,11 @@ public class HttpRoutePatternUtils {
 
         // Replace path variables with the regex pattern that matches any string except slashes
         StringBuilder regexBuilder = new StringBuilder("^"); // Start the regex with '^'
+
+        // If the path is just a single slash, handle that case
+        if (pathPattern.equals("/")) {
+            return "^/?$";  // Match only a single slash or an empty string
+        }
 
         // Traverse through the path pattern and build the regex
         int lastIndex = 0;

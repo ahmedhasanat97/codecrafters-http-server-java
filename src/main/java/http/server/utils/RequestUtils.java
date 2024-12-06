@@ -50,10 +50,6 @@ public class RequestUtils {
 
         String line;
         while ((line = in.readLine()) != null) {
-            if (line.isEmpty()) {
-                break;
-            }
-
             content.append(line).append("\n");
         }
 

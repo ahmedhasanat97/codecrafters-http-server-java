@@ -1,78 +1,17 @@
-package http.server;
+package app.handlers;
 
-import http.server.dtos.handlers.HttpRequestHandler;
+import http.server.common.ResponseStatus;
 import http.server.dtos.request.Request;
 import http.server.dtos.response.Response;
-import http.server.routes.HttpRoutes;
-import http.server.utils.RequestUtils;
+import http.server.dtos.response.ResponseStatusLine;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.Objects;
+public class Handlers {
 
-public class HttpConnection implements Runnable {
-
-    private final Socket clientSocket;
-    private final PrintWriter out;
-    private final BufferedReader in;
-    private final String directoryPath;
-    private final HttpRoutes httpRoutes;
-
-    public HttpConnection(Socket clientSocket, String directoryPath, HttpRoutes httpRoutes) throws IOException {
-        System.out.println("new connection created");
-        this.clientSocket = clientSocket;
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        this.directoryPath = directoryPath;
-        this.httpRoutes = httpRoutes;
-    }
-
-    @Override
-    public void run() {
-        try {
-            Request request = RequestUtils.readRequest(in);
-            Response response = handleRequest(request);
-            System.out.println(response);
-            out.print(response);
-            out.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            closeIn();
-            closeOut();
-            closeClientSocket();
-        }
-    }
-
-    private void closeIn() {
-        try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void closeOut() {
-        out.close();
-    }
-
-    private void closeClientSocket() {
-        try {
-            clientSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private Response handleRequest(Request request) {
-        HttpRequestHandler httpRequestHandler = httpRoutes.getHttpRequestHandler(request);
-        if (Objects.isNull(httpRequestHandler)) {
-            throw new RuntimeException("unable to find the httpRequestHandler");
-        }
-        return httpRequestHandler.handle(request);
+    public Response sayNothing(Request request) {
+        Response response = new Response();
+        ResponseStatusLine responseStatusLine = new ResponseStatusLine(request.getRequestLine().getProtocol(), ResponseStatus.OK);
+        response.setStatusLine(responseStatusLine);
+        return response;
     }
 
 //    private void handleResponse(PrintWriter out, Request request) throws IOException {

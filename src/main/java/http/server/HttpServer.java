@@ -1,5 +1,7 @@
 package http.server;
 
+import http.server.routes.HttpRoutes;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
@@ -11,11 +13,13 @@ public class HttpServer implements Runnable {
     private final int numberOfThreads;
     private boolean acceptConnections = true;
     private final String directoryPath;
+    private final HttpRoutes httpRoutes;
 
-    public HttpServer(int port, int numberOfThreads, String directoryPath) {
+    public HttpServer(int port, int numberOfThreads, String directoryPath, HttpRoutes httpRoutes) {
         this.port = port;
         this.numberOfThreads = numberOfThreads;
         this.directoryPath = directoryPath;
+        this.httpRoutes = httpRoutes;
     }
 
     @Override
@@ -28,7 +32,7 @@ public class HttpServer implements Runnable {
 
             while (acceptConnections) {
                 System.out.println("waiting for a new connection");
-                executorService.submit(new HttpConnection(serverSocket.accept(), directoryPath));
+                executorService.submit(new HttpConnection(serverSocket.accept(), directoryPath, httpRoutes));
                 System.out.println("new connection received");
             }
         } catch (IOException e) {

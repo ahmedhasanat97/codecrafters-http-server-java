@@ -1,3 +1,4 @@
+import app.routes.Routes;
 import http.server.HttpServer;
 
 import java.io.IOException;
@@ -12,7 +13,7 @@ public class Main {
             }
         }
 
-        HttpServer httpServer = new HttpServer(4221, Runtime.getRuntime().availableProcessors(), directoryPath);
+        HttpServer httpServer = new HttpServer(4221, Runtime.getRuntime().availableProcessors(), directoryPath, Routes.httpRoutes());
         httpServer.run();
     }
 

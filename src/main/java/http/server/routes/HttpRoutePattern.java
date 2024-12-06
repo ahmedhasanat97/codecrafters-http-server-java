@@ -24,4 +24,8 @@ public class HttpRoutePattern {
         return matcher.matches();
     }
 
+    public String getPathPattern() {
+        return pathPattern;
+    }
+
 }

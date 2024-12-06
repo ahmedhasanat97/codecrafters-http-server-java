@@ -5,9 +5,9 @@ import http.server.dtos.handlers.HttpRequestHandler;
 public class HttpRoute {
 
     private final HttpRoutePattern pattern;
-    private final HttpRequestHandler<?> httpRequestHandler;
+    private final HttpRequestHandler httpRequestHandler;
 
-    public HttpRoute(String pattern, HttpRequestHandler<?> httpRequestHandler) {
+    public HttpRoute(String pattern, HttpRequestHandler httpRequestHandler) {
         this.pattern = new HttpRoutePattern(pattern);
         this.httpRequestHandler = httpRequestHandler;
     }
@@ -20,7 +20,7 @@ public class HttpRoute {
         return pattern;
     }
 
-    public HttpRequestHandler<?> getRequestHandler() {
+    public HttpRequestHandler getRequestHandler() {
         return httpRequestHandler;
     }
 
