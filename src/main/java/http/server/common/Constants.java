@@ -1,3 +1,5 @@
+package http.server.common;
+
 public class Constants {
 
     public static final String CRLF = "\r\n";

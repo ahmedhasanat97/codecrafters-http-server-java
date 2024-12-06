@@ -1,3 +1,5 @@
+package http.server;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
@@ -19,7 +21,7 @@ public class HttpServer implements Runnable {
     @Override
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(port); ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads)) {
-            System.out.println("the server running on port " + port + ", with " + numberOfThreads + " thread pool");
+            System.out.println("the server running on port " + port + ", with " + numberOfThreads + " threads in the pool");
             // Since the tester restarts your program quite often, setting SO_REUSEADDR
             // ensures that we don't run into 'Address already in use' errors
             serverSocket.setReuseAddress(true);
