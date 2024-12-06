@@ -8,10 +8,12 @@ public class HttpServer implements Runnable {
     private final int port;
     private final int numberOfThreads;
     private boolean acceptConnections = true;
+    private final String directoryPath;
 
-    public HttpServer(int port, int numberOfThreads) throws IOException {
+    public HttpServer(int port, int numberOfThreads, String directoryPath) {
         this.port = port;
         this.numberOfThreads = numberOfThreads;
+        this.directoryPath = directoryPath;
     }
 
     @Override
@@ -24,7 +26,7 @@ public class HttpServer implements Runnable {
 
             while (acceptConnections) {
                 System.out.println("waiting for a new connection");
-                executorService.submit(new HttpConnection(serverSocket.accept()));
+                executorService.submit(new HttpConnection(serverSocket.accept(), directoryPath));
                 System.out.println("new connection received");
             }
         } catch (IOException e) {
