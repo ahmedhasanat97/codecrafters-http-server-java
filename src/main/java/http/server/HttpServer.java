@@ -1,6 +1,6 @@
 package http.server;
 
-import http.server.routes.HttpRoutes;
+import http.server.common.HttpRequestHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,14 +12,12 @@ public class HttpServer implements Runnable {
     private final int port;
     private final int numberOfThreads;
     private boolean acceptConnections = true;
-    private final String directoryPath;
-    private final HttpRoutes httpRoutes;
+    private final HttpRequestHandler httpRequestHandler;
 
-    public HttpServer(int port, int numberOfThreads, String directoryPath, HttpRoutes httpRoutes) {
+    public HttpServer(int port, int numberOfThreads, HttpRequestHandler httpRequestHandler) {
         this.port = port;
         this.numberOfThreads = numberOfThreads;
-        this.directoryPath = directoryPath;
-        this.httpRoutes = httpRoutes;
+        this.httpRequestHandler = httpRequestHandler;
     }
 
     @Override
@@ -31,9 +29,7 @@ public class HttpServer implements Runnable {
             serverSocket.setReuseAddress(true);
 
             while (acceptConnections) {
-                System.out.println("waiting for a new connection");
-                executorService.submit(new HttpConnection(serverSocket.accept(), directoryPath, httpRoutes));
-                System.out.println("new connection received");
+                executorService.submit(new HttpConnection(serverSocket.accept(), httpRequestHandler));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

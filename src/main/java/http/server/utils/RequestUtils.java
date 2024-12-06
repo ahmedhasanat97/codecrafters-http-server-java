@@ -32,8 +32,8 @@ public class RequestUtils {
     private static Headers readHeaders(BufferedReader in) throws IOException {
         Headers headers = new Headers();
 
-        String line;
-        while ((line = in.readLine()) != null) {
+        while (in.ready()) {
+            String line = in.readLine();
             if (line.isEmpty()) {
                 break;
             }
@@ -48,9 +48,12 @@ public class RequestUtils {
     private static RequestBody readRequestBody(BufferedReader in) throws IOException {
         StringBuilder content = new StringBuilder();
 
-        String line;
-        while ((line = in.readLine()) != null) {
-            content.append(line).append("\n");
+        while (in.ready()) {
+            content.append(in.readLine()).append("\n");
+        }
+
+        if (content.length() > 0) {
+            content.setLength(content.length() - 1);
         }
 
         return new RequestBody(content.toString());

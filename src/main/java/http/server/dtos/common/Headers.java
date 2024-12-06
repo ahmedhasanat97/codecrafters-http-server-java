@@ -4,6 +4,7 @@ import http.server.common.Constants;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import static http.server.common.Constants.CRLF;
@@ -17,7 +18,10 @@ public class Headers {
     }
 
     public void putHeader(String name, String value) {
-        headers.put(name, value);
+        if (Objects.isNull(name)) {
+            return;
+        }
+        headers.put(name.toLowerCase(), value);
     }
 
     public String getHeader(String name) {

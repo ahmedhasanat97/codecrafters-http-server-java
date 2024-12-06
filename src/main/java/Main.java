@@ -1,11 +1,10 @@
-import app.routes.Routes;
+import app.handlers.DummyHttpRequestHandler;
 import http.server.HttpServer;
-
-import java.io.IOException;
+import http.server.common.HttpRequestHandler;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         String directoryPath = null;
         for (int i = 0; i < args.length - 1; i += 2) {
             if ("--directory".equals(args[i])) {
@@ -13,7 +12,8 @@ public class Main {
             }
         }
 
-        HttpServer httpServer = new HttpServer(4221, Runtime.getRuntime().availableProcessors(), directoryPath, Routes.httpRoutes());
+        HttpRequestHandler httpRequestHandler = new DummyHttpRequestHandler(directoryPath);
+        HttpServer httpServer = new HttpServer(4221, Runtime.getRuntime().availableProcessors(), httpRequestHandler);
         httpServer.run();
     }
 
