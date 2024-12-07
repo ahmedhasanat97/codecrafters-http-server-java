@@ -69,7 +69,7 @@ public class DummyHttpRequestHandler implements HttpRequestHandler {
                 }
             } else if (HttpMethod.POST.equals(httpMethod) && path.startsWith("/files/")) {
                 String fileName = path.substring(7);
-                File file = new File(directoryPath + fileName);
+                File file = new File(directoryPath + "/" + fileName);
 
                 if (file.createNewFile()) {
                     FileWriter fileWriter = new FileWriter(file);
