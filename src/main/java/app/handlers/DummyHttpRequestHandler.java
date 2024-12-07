@@ -78,6 +78,7 @@ public class DummyHttpRequestHandler implements HttpRequestHandler {
                     fileWriter.close();
                 }
 
+                responseStatusLine.setStatus(ResponseStatus.CREATED);
                 body.setContent(request.getRequestBody().getContent());
                 headers.putHeader(HeadersConstants.CONTENT_TYPE, "application/octet-stream");
                 headers.putHeader(HeadersConstants.CONTENT_LENGTH, String.valueOf(Optional.ofNullable(response.getBody().getContent()).map(String::length).orElse(0)));
