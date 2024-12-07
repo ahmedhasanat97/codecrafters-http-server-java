@@ -1,6 +1,7 @@
 package app.handlers;
 
 import http.server.common.HeadersConstants;
+import http.server.common.HttpMethod;
 import http.server.common.HttpRequestHandler;
 import http.server.common.ResponseStatus;
 import http.server.dtos.common.Headers;
@@ -9,6 +10,8 @@ import http.server.dtos.response.Response;
 import http.server.dtos.response.ResponseBody;
 import http.server.dtos.response.ResponseStatusLine;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,6 +33,7 @@ public class DummyHttpRequestHandler implements HttpRequestHandler {
     public Response handle(Request request) {
         try {
             String path = request.getRequestLine().getPath();
+            HttpMethod httpMethod = request.getRequestLine().getHttpMethod();
 
             ResponseStatusLine responseStatusLine = new ResponseStatusLine(request.getRequestLine().getProtocol(), ResponseStatus.OK);
             Headers headers = new Headers();
@@ -47,7 +51,7 @@ public class DummyHttpRequestHandler implements HttpRequestHandler {
                 body.setContent(request.getHeaders().getHeader(HeadersConstants.USER_AGENT));
                 headers.putHeader(HeadersConstants.CONTENT_TYPE, "text/plain");
                 headers.putHeader(HeadersConstants.CONTENT_LENGTH, String.valueOf(Optional.ofNullable(response.getBody()).map(v -> v.toString().length()).orElse(0)));
-            } else if (path.startsWith("/files/")) {
+            } else if (HttpMethod.GET.equals(httpMethod) && path.startsWith("/files/")) {
                 String fileName = path.substring(7);
                 Path filePath = Path.of(directoryPath + fileName);
                 if (!Files.exists(filePath) || !Files.isRegularFile(filePath)) {
@@ -63,6 +67,20 @@ public class DummyHttpRequestHandler implements HttpRequestHandler {
                     headers.putHeader(HeadersConstants.CONTENT_TYPE, "application/octet-stream");
                     headers.putHeader(HeadersConstants.CONTENT_LENGTH, String.valueOf(Optional.ofNullable(response.getBody().getContent()).map(String::length).orElse(0)));
                 }
+            } else if (HttpMethod.POST.equals(httpMethod) && path.startsWith("/files/")) {
+                String fileName = path.substring(7);
+                File file = new File(directoryPath + fileName);
+
+                if (file.createNewFile()) {
+                    FileWriter fileWriter = new FileWriter(file);
+                    fileWriter.write(request.getRequestBody().getContent());
+                    fileWriter.flush();
+                    fileWriter.close();
+                }
+
+                body.setContent(request.getRequestBody().getContent());
+                headers.putHeader(HeadersConstants.CONTENT_TYPE, "application/octet-stream");
+                headers.putHeader(HeadersConstants.CONTENT_LENGTH, String.valueOf(Optional.ofNullable(response.getBody().getContent()).map(String::length).orElse(0)));
             } else {
                 responseStatusLine.setStatus(ResponseStatus.NOT_FOUND);
             }
